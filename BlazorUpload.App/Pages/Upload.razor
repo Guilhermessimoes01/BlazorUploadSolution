@@ -1,0 +1,40 @@
+﻿@page "/Upload"
+@using System.IO;
+@using BlazorUpload.App.Services
+@inject FileService fileService;
+
+
+<PageTitle>Index</PageTitle>
+
+<h1>Upload de Arquivos</h1>
+<form @onsubmit="OnSubmit">
+    <InputFile class="form-control" OnChange="OnInputFileChange" />
+    <br />
+    @Message
+    <button class="btn btn-success" type="submit">Enviar</button>
+</form>
+
+
+
+@code
+{
+    string Message = "Sem arquivo selecionado";
+    IReadOnlyList<IBrowserFile> SelectedFiles;
+
+    void OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        SelectedFiles = args.GetMultipleFiles();
+        Message = $"{SelectedFiles.Count} arquivos selecionados";
+        StateHasChanged();
+    }
+    async Task OnSubmit()
+    {
+        if (SelectedFiles == null || SelectedFiles.Count == 0) return;
+
+        foreach (var file in SelectedFiles)
+        {
+            Message = await fileService.UploadFile(file);
+            StateHasChanged();
+        }
+    }
+}

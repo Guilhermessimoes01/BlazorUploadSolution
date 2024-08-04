@@ -1,0 +1,93 @@
+﻿@page "/login"
+@using BlazorUpload.App.Services.Entity;
+@using BlazorUpload.App.Services.Interface;
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<div class="login-container">
+    <div class="login-box">
+        <h3>Login</h3>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" @bind="username" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" @bind="password" />
+        </div>
+        <button @onclick="Logn">Login</button>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p style="color:red;">@errorMessage</p>
+        }
+    </div>
+</div>
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #00154f 0%, #390A43 100%);
+    }
+
+    .login-box {
+        background: linear-gradient(135deg, #00186c 0%, #5c1374 100%);
+        padding: 20px;
+        border-radius: 15px;
+        width: 300px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #45a049;
+        }
+</style>
+
+
+@code {
+    private string username;
+    private string password;
+    private string errorMessage;
+
+    private async Task Logn()
+    {
+        if (await AuthService.Login(username, password))
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Invalid username or password";
+        }
+    }
+}
